@@ -89,5 +89,10 @@ internal class Program
                 }
             }
         }
+        else
+        {
+            Console.WriteLine("Dota2 is not running.");
+            Console.ReadLine();
+        }
     }
 }
