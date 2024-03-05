@@ -28,12 +28,11 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
 
     - name: Generate unique tag based on date and time
-      run: echo "UNIQUE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
-      shell: bash
-
-    - name: Output UNIQUE_TAG
       id: tag_output
-      run: echo "::set-output name=tag::${UNIQUE_TAG}"
+      run: |
+        echo "UNIQUE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+        echo "::set-output name=tag::$(date +'%Y%m%d%H%M%S')" # Установка выходного значения
+      shell: bash
       
     - name: Restore the application
       run: msbuild ${{ env.Solution_Name }} /t:Restore /p:Configuration=Release
@@ -63,21 +62,17 @@ jobs:
       run: echo "UNIQUE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
       shell: bash
 
-    - name: Generate unique tag based on date and time
-      run: echo "UNIQUE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
-      shell: bash
-
   publish-release:
     needs: build_and_publish
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
+
     - uses: actions/download-artifact@v3
       with:
         name: DistanceExecutable
 
     - name: Create Release
-      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
