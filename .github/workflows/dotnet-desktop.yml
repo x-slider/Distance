@@ -20,6 +20,10 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Update version in Form1.Designer.cs
+      run: |
+        $tag = "${{ github.run_number }}"
+
     - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
@@ -32,6 +36,7 @@ jobs:
     - name: nuget restore
       run: nuget restore "${{ env.Solution_Name }}"
 
+    # Указываем платформу в msbuild
     - name: msbuild
       run: msbuild "${{ env.Solution_Name }}" /t:Restore /p:Configuration=${{ env.Configuration }} /p:Platform=${{ env.Platform }}
 
@@ -40,7 +45,8 @@ jobs:
         $certificatePath = Join-Path -Path "${{ env.Wap_Project_Directory }}" -ChildPath GitHubActionsWorkflow.pfx
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
-    - run: msbuild "${{ env.Wap_Project_Directory }}\${{ env.Wap_Project_Directory }}.csproj" /p:Configuration=${{ env.Configuration }} /p:UapAppxPackageBuildMode=StoreUpload /p:AppxBundle=Always /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }} /p:Platform=${{ env.Platform }}
+    # Указываем платформу в сборке приложения
+    - run: msbuild "${{ env.Wap_Project_Directory }}\${{ env.Wap_Project_Directory }}.csproj" /p:Configuration=${{ env.configuration }} /p:UapAppxPackageBuildMode=StoreUpload /p:AppxBundle=Always /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }} /p:Platform=${{ env.platform }}
 
     - run: Remove-Item -path "${{ env.Wap_Project_Directory }}\GitHubActionsWorkflow.pfx"
 
@@ -48,8 +54,14 @@ jobs:
 
     - name: Archive build artifacts
       run: |
-        $path = "${{ github.workspace }}\Distance\bin\x64\Release\"
-        $destination = "${{ github.workspace }}\Distance.zip"
+        $path = "${{ github.workspace }}\Avokado GUI\bin\x64\Release\"
+        $destination = "${{ github.workspace }}\Avokado-GUI-Build.zip"
         Write-Host "Archiving path: $path"
         Compress-Archive -Path $path -DestinationPath $destination -ErrorAction Stop
         
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Distance
+        path: Distance.zip
+    
