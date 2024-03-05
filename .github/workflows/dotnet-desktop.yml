@@ -52,7 +52,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: DistanceExecutable
-        path: ${{ env.Wap_Project_Directory }}/bin/Distance.exe
+        path: Distance/Distance/bin/Release/net8.0/Distance.exe
 
   publish-release:
     needs: build
@@ -70,8 +70,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
         draft: false
         prerelease: false
 
@@ -84,3 +84,4 @@ jobs:
         asset_path: ./Distance.exe
         asset_name: Distance.exe
         asset_content_type: application/octet-stream
+
