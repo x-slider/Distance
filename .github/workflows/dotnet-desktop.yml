@@ -28,10 +28,10 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
 
     - name: Generate unique tag based on date and time
-      id: tag_output
+      id: tag_output # This ID is used to reference the output
       run: |
-        echo "UNIQUE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
-        echo "::set-output name=tag::$(date +'%Y%m%d%H%M%S')" # Установка выходного значения
+        echo "UNIQUE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV # Sets it as an env variable for use in this job
+        echo "::set-output name=tag::$(date +'%Y%m%d%H%M%S')" # Correctly outputs the tag for use in subsequent jobs
       shell: bash
       
     - name: Restore the application
@@ -58,9 +58,8 @@ jobs:
         name: DistanceExecutable
         path: ${{env.Wap_Project_Directory}}/publish/Distance.exe
 
-    - name: Generate unique tag based on date and time
-      run: echo "UNIQUE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
-      shell: bash
+    outputs:
+      generated_tag: ${{ steps.tag_output.outputs.tag }} # Ensure this matches the step ID above
 
   publish-release:
     needs: build_and_publish
@@ -73,14 +72,13 @@ jobs:
         name: DistanceExecutable
 
     - name: Create Release
+      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ needs.build_and_publish.outputs.tag }}
-        release_name: Release ${{ needs.build_and_publish.outputs.tag }}
-        draft: false
-        prerelease: false
+        tag_name: ${{ needs.build_and_publish.outputs.generated_tag }}
+        release_name: Release ${{ needs.build_and_publish.outputs.generated_tag }}
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
