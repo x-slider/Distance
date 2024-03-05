@@ -35,11 +35,12 @@ internal class Program
     {
         Console.WriteLine("Getting PID for dota2.exe");
         Process[] processes = Process.GetProcessesByName("dota2");
-        IntPtr processHandle = OpenProcess(PROCESS_WM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, false, process.Id);
 
         if (processes.Length > 0)
         {
             Process process = processes[0];
+            IntPtr processHandle = OpenProcess(PROCESS_WM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, false, process.Id);
+
             IntPtr clientDllBaseAddress = GetModuleBaseAddress(process, "client.dll");
             if (clientDllBaseAddress != IntPtr.Zero)
             {
