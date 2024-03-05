@@ -3,8 +3,6 @@ name: .NET Core Desktop Release Build and Publish
 on:
   push:
     branches: [ "master" ]
-    tags:
-      - 'v*'
 
 jobs:
   build_and_publish:
@@ -53,6 +51,10 @@ jobs:
         name: DistanceExecutable
         path: ${{env.Wap_Project_Directory}}/publish/Distance.exe
 
+    - name: Generate unique tag based on date and time
+      run: echo "UNIQUE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+      shell: bash
+
   publish-release:
     needs: build_and_publish
     runs-on: windows-latest
@@ -69,8 +71,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref_name }}
-        release_name: Release ${{ github.ref_name }}
+        tag_name: ${{ env.UNIQUE_TAG }}
+        release_name: Release ${{ env.UNIQUE_TAG }}
         draft: false
         prerelease: false
 
