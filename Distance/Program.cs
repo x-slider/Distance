@@ -37,51 +37,54 @@ internal class Program
         Process process = Process.GetProcessesByName("dota2")[0];
         IntPtr processHandle = OpenProcess(PROCESS_WM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, false, process.Id);
 
-        IntPtr clientDllBaseAddress = GetModuleBaseAddress(process, "client.dll");
-        if (clientDllBaseAddress != IntPtr.Zero)
-        {
-            Console.WriteLine($"client.dll base address: {clientDllBaseAddress.ToString("X")}");
-            int offset = 0x4641348;
-            distanceAddress = IntPtr.Add(clientDllBaseAddress, offset);
-            Console.WriteLine($"Distance address (client.dll + {offset.ToString("X")}): {distanceAddress.ToString("X")}");
-        }
-        else
-        {
-            Console.WriteLine("client.dll not found.");
-            return; 
-        }
-
-        while (true) 
-        {
-            byte[] buffer = new byte[4];
-            if (ReadProcessMemory(processHandle, distanceAddress, buffer, buffer.Length, out int bytesRead))
+        if (process != null)
+        { 
+            IntPtr clientDllBaseAddress = GetModuleBaseAddress(process, "client.dll");
+            if (clientDllBaseAddress != IntPtr.Zero)
             {
-                float currentValue = BitConverter.ToSingle(buffer, 0);
-                Console.WriteLine($"Current value: {currentValue}");
+                Console.WriteLine($"client.dll base address: {clientDllBaseAddress.ToString("X")}");
+                int offset = 0x4641348;
+                distanceAddress = IntPtr.Add(clientDllBaseAddress, offset);
+                Console.WriteLine($"Distance address (client.dll + {offset.ToString("X")}): {distanceAddress.ToString("X")}");
+            }
+            else
+            {
+                Console.WriteLine("client.dll not found.");
+                return; 
+            }
 
-                Console.Write("\nEnter new value: ");
-                string input = Console.ReadLine();
-                if (float.TryParse(input, out float newValue))
+            while (true) 
+            {
+                byte[] buffer = new byte[4];
+                if (ReadProcessMemory(processHandle, distanceAddress, buffer, buffer.Length, out int bytesRead))
                 {
-                    byte[] bytesToWrite = BitConverter.GetBytes(newValue);
-                    if (WriteProcessMemory(processHandle, distanceAddress, bytesToWrite, bytesToWrite.Length, out int bytesWritten))
+                    float currentValue = BitConverter.ToSingle(buffer, 0);
+                    Console.WriteLine($"Current value: {currentValue}");
+
+                    Console.Write("\nEnter new value: ");
+                    string input = Console.ReadLine();
+                    if (float.TryParse(input, out float newValue))
                     {
-                        Console.WriteLine("Value successfully written.");
+                        byte[] bytesToWrite = BitConverter.GetBytes(newValue);
+                        if (WriteProcessMemory(processHandle, distanceAddress, bytesToWrite, bytesToWrite.Length, out int bytesWritten))
+                        {
+                            Console.WriteLine("Value successfully written.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Write error.");
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("Write error.");
+                        Console.WriteLine("Invalid input.");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Invalid input.");
+                    Console.WriteLine("Read error. Ensure the game is running and try again.");
+                    break; 
                 }
-            }
-            else
-            {
-                Console.WriteLine("Read error. Ensure the game is running and try again.");
-                break; 
             }
         }
     }
