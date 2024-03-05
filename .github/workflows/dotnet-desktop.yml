@@ -43,6 +43,19 @@ jobs:
 
     - name: Remove the pfx
       run: Remove-Item -path ${{ env.Wap_Project_Directory }}\GitHubActionsWorkflow.pfx
+    
+    - name: List output files
+      run: dir Distance\ /s
+
+
+    - name: List output files
+      run: dir Distance\bin\ /s
+
+    - name: List output files
+      run: dir Distance\bin\Release\net6.0\ /s
+      
+    - name: List output files
+      run: dir Distance\bin\Release\net6.0\ /s
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
