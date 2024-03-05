@@ -45,10 +45,9 @@ jobs:
       run: Remove-Item -path ${{ env.Wap_Project_Directory }}\GitHubActionsWorkflow.pfx
     
     - name: List output files
-      run: Get-ChildItem -Path .\ -Recurse
+      run: Get-ChildItem -Path ./ -Recurse
 
-
-    - name: Upload build artifacts
+    - name: Upload build artifact
       uses: actions/upload-artifact@v3
       with:
         name: DistanceExecutable
