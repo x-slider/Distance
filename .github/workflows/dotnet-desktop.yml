@@ -52,3 +52,4 @@ jobs:
         $destination = "${{ github.workspace }}\Distance.zip"
         Write-Host "Archiving path: $path"
         Compress-Archive -Path $path -DestinationPath $destination -ErrorAction Stop
+        
