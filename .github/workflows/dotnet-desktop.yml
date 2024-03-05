@@ -44,14 +44,11 @@ jobs:
     - name: Remove the pfx
       run: Remove-Item -path ${{ env.Wap_Project_Directory }}\GitHubActionsWorkflow.pfx
 
-    - name: List files in root directory
-      run: dir ${{ env.Wap_Project_Directory }}
-
     - name: List files in AppPackages directory
-      run: dir ${{ env.Wap_Project_Directory }}\AppPackages
+      run: dir ${{ env.Wap_Project_Directory }}\bin
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: MSIX Package
-        path: ${{ env.Wap_Project_Directory }}\AppPackages
+        path: ${{ env.Wap_Project_Directory }}\bin
