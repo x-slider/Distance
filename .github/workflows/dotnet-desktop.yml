@@ -48,7 +48,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: DistanceExecutable
-        path: ${{ env.Wap_Project_Directory }}/bin/Release/net6.0/Distance.exe
+        path: ${{ env.Wap_Project_Directory }}/bin/Distance.exe
 
   publish-release:
     needs: build
