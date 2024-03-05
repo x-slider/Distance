@@ -45,7 +45,7 @@ internal class Program
             if (clientDllBaseAddress != IntPtr.Zero)
             {
                 Console.WriteLine($"client.dll base address: {clientDllBaseAddress.ToString("X")}");
-                int offset = 0x4641348;
+                int offset = 0x4641338; //0x4641348
                 distanceAddress = IntPtr.Add(clientDllBaseAddress, offset);
                 Console.WriteLine($"Distance address (client.dll + {offset.ToString("X")}): {distanceAddress.ToString("X")}");
             }
