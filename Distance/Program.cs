@@ -56,7 +56,7 @@ internal class Program
 
         if (ReadProcessMemory(processHandle, baseAddress, buffer, buffer.Length, out bytesRead))
         {
-            IntPtr startAddress = new IntPtr(0x7FFC99000000);
+            IntPtr startAddress = new IntPtr(0);
             var addresses = FindPatternAddresses(processHandle, baseAddress, buffer, bytesRead, pattern, skipIndexes, startAddress);
 
             IntPtr chosenAddress = IntPtr.Zero;
