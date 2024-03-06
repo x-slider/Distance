@@ -7,6 +7,11 @@
     <Nullable>enable</Nullable>
     <PublishSingleFile>true</PublishSingleFile>
     <Platforms>AnyCPU</Platforms>
+    <ApplicationIcon>distance.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="distance.ico" />
+  </ItemGroup>
 
 </Project>
